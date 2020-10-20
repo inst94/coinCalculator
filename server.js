@@ -17,15 +17,23 @@ app.post('/', (req, res) => {
     .then(function(response){
         let rate;
         let code;
+        let result;
+        let val = Number(req.body.amount);
         if(currency === 'EUR'){
             rate = response.data.bpi.EUR.rate;
             code = response.data.bpi.EUR.code;
+            bitcoin = response.data.bpi.EUR.rate_float;
+            result = val * bitcoin;
         } else {
             rate = response.data.bpi.USD.rate;
             code = response.data.bpi.USD.code;
+            bitcoin = response.data.bpi.USD.rate_float;
+            result = val * bitcoin;
         }
         let disclaimer = response.data.disclaimer;
-        res.write(`<p>${rate} ${code}</p>`);
+        console.log(`${val} * ${bitcoin} = ${result.toFixed(2)} ${code}`);
+        res.write(`<p>${val} Bitcoin * ${bitcoin} ${code} = ${result.toFixed(2)} ${code}</p>`);
+        res.write(`<p> 1 Bitcoin = ${rate} ${code}</p>`);
         res.write(`<p>${disclaimer}</p>`);
         res.send();
     })
@@ -34,6 +42,6 @@ app.post('/', (req, res) => {
     });
 });
 
-app.listen(3000, ()=> {
-    console.log('Server is running on port 3000.');
+app.listen(process.env.PORT || 3000, ()=> {
+    console.log('Server has started.');
 });
